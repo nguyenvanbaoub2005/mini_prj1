@@ -41,7 +41,8 @@ export const SyncQueueModal: React.FC<SyncQueueModalProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      fetchSurveys();
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      void fetchSurveys();
     }
   }, [isOpen]);
 

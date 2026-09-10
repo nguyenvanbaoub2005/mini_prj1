@@ -17,6 +17,7 @@ import {
 } from './services/db';
 import { networkService } from './services/network';
 import { syncEngine } from './services/sync';
+import { registerPushNotifications } from './services/notifications';
 import type { SurveyFormData, SurveyRecord, NetworkState } from './types/survey';
 
 interface ToastState {
@@ -67,6 +68,7 @@ export default function App() {
   // 1. Khởi tạo theo dõi mạng và hàng đợi đồng bộ
   useEffect(() => {
     networkService.init().then((state) => setNetwork(state));
+    registerPushNotifications();
 
     const unsubscribeNetwork = networkService.subscribe((state) => {
       setNetwork(state);
@@ -75,10 +77,11 @@ export default function App() {
     const unsubscribeSync = syncEngine.subscribe((syncing, count) => {
       setIsSyncing(syncing);
       setPendingCount(count);
-      refreshCounts();
+      void refreshCounts();
     });
 
-    refreshCounts();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void refreshCounts();
 
     return () => {
       unsubscribeNetwork();

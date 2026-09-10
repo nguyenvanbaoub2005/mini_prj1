@@ -1,17 +1,17 @@
 # MINI-PROJECT SHORT TECHNICAL REPORT
 **Course:** Cross-Platform Mobile App Development (VKU)  
-**Mini-Project Title:** Mini-Project 1: VKU Field Survey — Offline Data Collection (PWA)  
-**Team / Student Name:** Nguyễn Như Huy  
+**Mini-Project Title:** Mini-Project 1: VKU Field Survey — PWA to Native (Capacitor Migration)  
+**Team / Student Name:** Nguyễn Văn Bảo 
 **Student ID:** 22ITxxx  
-**Submission Date:** 03/09/2026  
+**Submission Date:** 10/09/2026  
 
 ---
 
 ## 1. GENERAL INFORMATION & DELIVERABLE LINKS
 * **Student Information:**
-  1. Nguyễn Như Huy — Student ID: 22ITxxx — Role: Full-Stack PWA Architecture & Development — Contribution: 100%
+  1. Nguyễn Văn Bảo — Student ID: 23IT016 — Role: Full-Stack PWA Architecture & Development — Contribution: 100%
 * **🔗 Live Demo URL:** [https://mini-project1-ten.vercel.app/](https://mini-project1-ten.vercel.app/)
-* **💻 GitHub Repository:** [https://github.com/nhuhuy05/mini-project1](https://github.com/nhuhuy05/mini-project1)
+* **💻 GitHub Repository:** [https://github.com/nguyenvanbaoub2005/mini_prj1](https://github.com/nguyenvanbaoub2005/mini_prj1)
 * **📊 Google Sheets Database:** [https://docs.google.com/spreadsheets/d/1ry-4NJ-sXtrmQSzBmQkWriJqnWI_A1FnuIRDY96tp5A/edit?usp=sharing](https://docs.google.com/spreadsheets/d/1ry-4NJ-sXtrmQSzBmQkWriJqnWI_A1FnuIRDY96tp5A/edit?usp=sharing)
 * **🎥 Video Demo (Optional):** [https://youtu.be/xxx]
 
@@ -24,8 +24,11 @@
 | **1** | **PWA Standalone & App Shell Caching** | ✅ Complete | • Manifest chuẩn W3C (`display: standalone`, `theme_color: #0284c7`, icon 192x192 và 512x512 maskable).<br>• Service Worker (Workbox) precache toàn bộ App Shell (HTML, CSS, JS bundles, icons) theo chiến lược **Cache-First**, khởi động tức thì dưới 1 giây (**sub-second offline boot**) khi ngắt kết nối mạng.<br>• Thiết kế Mobile-First 100% responsive, hỗ trợ chế độ Light/Dark Mode tự động. |
 | **2** | **Multi-step Form & Local Draft Persistence** | ✅ Complete | • Form khảo sát 4 bước: Vị trí phòng học VKU (Tòa nhà, Tầng, Số phòng) ➔ Phân loại thiết bị (Hardware, Projector, AC, Electrical, Furniture) ➔ Đánh giá 1–5 sao kèm ghi chú lỗi ➔ Chụp ảnh minh chứng hiện trường & Bảng tóm tắt.<br>• Tự động lưu nháp thời gian thực (Real-time Persistence) vào store `drafts` trong **IndexedDB** (qua thư viện `idb`), khôi phục nguyên vẹn trạng thái khi reload (F5) hoặc vô tình đóng tab. |
 | **3** | **Offline Queue & Automatic Dual-Sync Engine** | ✅ Complete | • **Khi Online:** Tự động đồng bộ ngay tức thì (< 1s) lên Google Sheets sau khi bấm Gửi.<br>• **Khi Offline:** Phiếu được gắn UUID v4, timestamp và lưu vào store `surveys` trong **IndexedDB** với trạng thái `PENDING_SYNC`. Lắng nghe sự kiện mạng (`window.ononline` & Network Service) để kích hoạt `SyncEngine` tự động gửi tuần tự các phiếu tồn đọng lên **Google Sheets Webhook (Apps Script)** khi có mạng trở lại, chuyển trạng thái thành `SYNCED`. |
-| **4** | **Camera Photo Capture & Media Handling** | ✅ Complete | • Tích hợp chụp ảnh hiện trường với xem trước (preview) và cho phép xóa/chụp lại.<br>• Tự động chuyển đổi ảnh sang Base64 DataURL để lưu trữ an toàn trong IndexedDB mà không bị giới hạn bộ nhớ như LocalStorage. |
-| **5** | **Quản lý & Xem lịch sử Phiếu đã nộp (History Manager)** | ✅ Complete | • Nút **"Đã nộp ([số lượng])"** trên Header luôn hiển thị trực quan.<br>• Trình quản lý modal với 3 tab lọc: *Tất cả*, *Chờ gửi*, *Đã đồng bộ*.<br>• Hiển thị chi tiết từng phiếu (vị trí, đánh giá 1-5 sao, ghi chú lỗi, thời gian).<br>• Tích hợp **Lightbox phóng to ảnh hiện trường** khi bấm vào thumbnail.<br>• Hỗ trợ nút xóa phiếu cục bộ khỏi bộ nhớ máy. |
+| **4** | **Camera Photo Capture (Native & Web)** | ✅ Complete | • Tích hợp Plugin `@capacitor/camera`. Trên Android, mở Camera hệ thống để chụp minh chứng với tính ổn định cao.<br>• Trên trình duyệt Web, tự động fallback về `<input type="file">` để chọn ảnh an toàn, chuyển đổi thành Base64 DataURL để lưu trữ vào IndexedDB. |
+| **5** | **Native Geolocation & GPS** | ✅ Complete | • Bổ sung tính năng định vị GPS với Plugin `@capacitor/geolocation` thay vì dùng API của trình duyệt. Tọa độ chính xác được đính kèm vào phiếu khảo sát hiện trường. |
+| **6** | **Push Notifications & Sync Alerts** | ✅ Complete | • Tích hợp Plugin `@capacitor/push-notifications` để đăng ký thông báo đẩy. Lắng nghe quá trình đồng bộ, tự động cảnh báo Local/Push khi tiến trình đồng bộ phiếu từ hàng đợi lên mạng thành công. |
+| **7** | **Android APK Build & Native Shell** | ✅ Complete | • Cấu hình nền tảng Android (WebView + Native Bridge) qua `npx cap add android`. Biên dịch thành công mã nguồn web thành ứng dụng native thực thi độc lập (Standalone APK). |
+| **8** | **Lịch sử Phiếu Đã Nộp & Sync Queue** | ✅ Complete | • Trình quản lý modal 3 tab lọc: *Tất cả*, *Chờ gửi*, *Đã đồng bộ*.<br>• Hiển thị chi tiết từng phiếu. Tích hợp Lightbox phóng to ảnh.<br>• Hỗ trợ nút xóa phiếu cục bộ khỏi bộ nhớ máy. |
 
 ---
 
@@ -60,18 +63,18 @@
 ```
 
 ### 3.2. Cấu trúc Thư mục Dự án
-* `src/types/survey.ts`: Khai báo Interface chuẩn cho `SurveyFormData`, `SurveyRecord`, `SyncStatus`, `FacilityCategory`.
-* `src/services/db.ts`: Lớp tương tác IndexedDB gồm 2 Object Stores:
-  * `drafts`: Lưu trữ bản ghi `active_draft` phục vụ khôi phục form dở dang.
-  * `surveys`: Hàng đợi đồng bộ với các index `by-status` và `by-created`.
-* `src/services/network.ts`: Quản lý trạng thái kết nối mạng, phát sự kiện lắng nghe `online`/`offline`.
-* `src/services/sync.ts`: Bộ điều phối đồng bộ tự động 2 chế độ (Instant Online & Background Reconnect) kết nối đến Google Sheets Webhook.
+* `src/types/survey.ts`: Khai báo Interface chuẩn cho `SurveyFormData`, `SurveyRecord`, `SyncStatus`, `FacilityCategory`. Bổ sung trường tọa độ `latitude`, `longitude`.
+* `src/services/db.ts`: Lớp tương tác IndexedDB gồm 2 Object Stores: `drafts` và `surveys`.
+* `src/services/network.ts`: Quản lý trạng thái kết nối mạng qua `@capacitor/network` và fallback window online/offline.
+* `src/services/sync.ts`: Bộ điều phối đồng bộ tự động 2 chế độ (Instant Online & Background Reconnect) kết nối đến Google Sheets Webhook. Tự kích hoạt cảnh báo thông qua hàm `notifySyncSuccess`.
+* `src/services/notifications.ts`: Quản lý quy trình cấp phép, đăng ký token qua `@capacitor/push-notifications` và giả lập Push từ Server.
+* `src/services/camera.ts`: Gọi Native Camera thông qua `@capacitor/camera` hoặc fallback về input web.
 * `src/components/`: Các module giao diện phân tầng:
-  * `Header.tsx`: Thanh tiêu đề, huy hiệu mạng (Online/Offline), nút mở Lịch sử đã nộp kèm số lượng phiếu.
-  * `StepIndicator.tsx`: Thanh tiến trình 4 bước tương tác.
-  * `Step1Location.tsx` ➔ `Step4MediaReview.tsx`: Các bước nhập liệu và chụp ảnh.
-  * `SyncQueueModal.tsx`: Trình xem lịch sử phiếu đã nộp, bộ lọc 3 tabs, và Lightbox phóng to ảnh.
-* `src/index.css`: Toàn bộ Design System chuẩn Mobile-First Viewport, màu VKU Blue `#0284c7`.
+  * `Header.tsx`, `StepIndicator.tsx`, `SyncQueueModal.tsx`.
+  * `Step1Location.tsx`: Lấy vị trí tòa nhà và lấy trực tiếp GPS Native qua `@capacitor/geolocation`.
+  * `Step4MediaReview.tsx`: Gọi Camera Native hoặc Web File Picker.
+* `android/`: Native Android Project shell được tạo bởi Capacitor. Môi trường biên dịch APK với WebView và Bridge.
+* `capacitor.config.ts`: File cấu hình lõi của ứng dụng Capacitor.
 
 ---
 
@@ -125,3 +128,7 @@
 ### 5.3. Thách thức 3: Khởi động tức thì dưới 1 giây (Sub-second Offline Boot) khi ngắt kết nối hoàn toàn
 * **Vấn đề:** Ứng dụng PWA cần phải mở được ngay lập tức ở khu vực không có sóng mạng mà không hiển thị màn hình báo lỗi "Không có kết nối Internet" của trình duyệt.
 * **Giải pháp:** Cấu hình **Workbox Service Worker** với chiến lược **Cache-First** cho toàn bộ App Shell (HTML, CSS, JS bundle, Web Fonts, SVG Icons). Toàn bộ 12 tài nguyên tĩnh được nạp sẵn vào Cache Storage trong sự kiện `install` của Service Worker, giúp thời gian tải lại ứng dụng khi Offline đạt dưới 300ms.
+
+### 5.4. Thách thức 4: Tương thích Camera đa nền tảng (Native vs Web) khi dùng Capacitor
+* **Vấn đề:** Khi chuyển đổi sang ứng dụng Android với Capacitor, mã nguồn Web cần gọi Native Camera qua `@capacitor/camera`. Tuy nhiên, nếu xóa bỏ hoàn toàn thẻ `<input type="file">` cũ, chức năng này trên môi trường chạy thử của trình duyệt (`npm run dev`) sẽ lỗi do API Native không khả dụng.
+* **Giải pháp:** Thiết kế cơ chế Fallback hỗn hợp (Hybrid Fallback) trong component `Step4MediaReview.tsx`. Hàm `handleCaptureNative()` sẽ gọi Native Plugin trước tiên. Nếu Capacitor báo lỗi (bắt qua block `catch` để return `null`), ứng dụng sẽ tự động kích hoạt tham chiếu (Ref) đến thẻ input ẩn để mở Web File Picker dự phòng, đảm bảo tính liên tục của trải nghiệm trên cả Web và thiết bị di động thật.

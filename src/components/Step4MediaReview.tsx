@@ -14,14 +14,16 @@ export const Step4MediaReview: React.FC<Step4MediaReviewProps> = ({
   network,
   onChange,
 }) => {
+  // Fallback ref cho Web browser (khi Capacitor Camera không khả dụng)
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleCaptureNative = async () => {
     const photoUrl = await takePhoto();
     if (photoUrl) {
+      // Native: Capacitor Camera thành công
       onChange({ photoBase64: photoUrl });
     } else {
-      // Nếu thiết bị không mở được Native Camera prompt, mở file picker
+      // Web fallback: mở file picker khi Capacitor Camera không khả dụng
       fileInputRef.current?.click();
     }
   };
@@ -40,9 +42,7 @@ export const Step4MediaReview: React.FC<Step4MediaReviewProps> = ({
 
   const handleRemovePhoto = () => {
     onChange({ photoBase64: undefined });
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   return (
@@ -52,7 +52,7 @@ export const Step4MediaReview: React.FC<Step4MediaReviewProps> = ({
         <p className="section-subtitle">Chụp ảnh hiện trường hư hỏng và kiểm tra lại thông tin</p>
       </div>
 
-      {/* Input ẩn phục vụ Web browser file upload */}
+      {/* Hidden input: Web browser fallback khi Capacitor Camera không khả dụng */}
       <input
         type="file"
         ref={fileInputRef}
@@ -89,7 +89,7 @@ export const Step4MediaReview: React.FC<Step4MediaReviewProps> = ({
               Chụp ảnh hiện trường
             </h4>
             <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: 2 }}>
-              Sử dụng Camera thiết bị hoặc tải ảnh từ máy
+              Camera Native (Android) / Chọn ảnh từ máy (Web)
             </p>
           </div>
           <button
@@ -102,7 +102,7 @@ export const Step4MediaReview: React.FC<Step4MediaReviewProps> = ({
             }}
           >
             <Upload size={14} />
-            <span>Chọn từ tệp máy</span>
+            <span>Chọn từ tệp</span>
           </button>
         </div>
       )}

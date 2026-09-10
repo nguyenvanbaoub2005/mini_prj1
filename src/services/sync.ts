@@ -1,5 +1,6 @@
 import { getPendingSurveys, updateSurveyStatus } from './db';
 import { networkService } from './network';
+import { notifySyncSuccess } from './notifications';
 import type { SurveyRecord } from '../types/survey';
 
 export type SyncEventCallback = (isSyncing: boolean, pendingCount: number) => void;
@@ -75,10 +76,9 @@ class SyncEngine {
 
     this.isSyncing = true;
     let successCount = 0;
-    let pendingList: SurveyRecord[] = [];
 
     try {
-      pendingList = await getPendingSurveys();
+      const pendingList = await getPendingSurveys();
       this.notify(true, pendingList.length);
 
       for (const survey of pendingList) {
@@ -86,6 +86,7 @@ class SyncEngine {
           const ok = await this.dispatchSurveyToServer(survey);
           if (ok) {
             await updateSurveyStatus(survey.id, 'SYNCED', new Date().toISOString());
+            notifySyncSuccess(survey.id);
             successCount++;
           } else {
             await updateSurveyStatus(survey.id, 'FAILED');

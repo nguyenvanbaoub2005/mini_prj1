@@ -7,6 +7,8 @@ export interface SurveyFormData {
   building: string;
   floor: string;
   room: string;
+  latitude?: number;
+  longitude?: number;
   // Bước 2: Phân loại cơ sở vật chất
   category: FacilityCategory | '';
   // Bước 3: Tình trạng & Ghi chú lỗi

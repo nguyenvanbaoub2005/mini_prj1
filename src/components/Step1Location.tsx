@@ -1,7 +1,7 @@
-import React from 'react';
-import { MapPin, Building2, Layers } from 'lucide-react';
+import React, { useState } from 'react';
+import { MapPin, Building2, Layers, Navigation } from 'lucide-react';
+import { Geolocation } from '@capacitor/geolocation';
 import type { SurveyFormData } from '../types/survey';
-
 interface Step1LocationProps {
   data: SurveyFormData;
   onChange: (fields: Partial<SurveyFormData>) => void;
@@ -27,6 +27,27 @@ const FLOORS = [
 ];
 
 export const Step1Location: React.FC<Step1LocationProps> = ({ data, onChange }) => {
+  const [isLocating, setIsLocating] = useState(false);
+
+  const handleGetLocation = async () => {
+    setIsLocating(true);
+    try {
+      const position = await Geolocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 10000
+      });
+      onChange({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+      });
+    } catch (err) {
+      console.error('Lỗi lấy tọa độ:', err);
+      alert('Không thể lấy tọa độ GPS. Hãy kiểm tra quyền truy cập vị trí.');
+    } finally {
+      setIsLocating(false);
+    }
+  };
+
   return (
     <div className="form-content">
       <div>
@@ -110,6 +131,25 @@ export const Step1Location: React.FC<Step1LocationProps> = ({ data, onChange }) 
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Lấy tọa độ GPS (Capacitor Geolocation) */}
+      <div className="form-group" style={{ marginTop: '16px' }}>
+        <button
+          type="button"
+          className="btn btn-secondary"
+          onClick={handleGetLocation}
+          disabled={isLocating}
+          style={{ width: '100%', justifyContent: 'center' }}
+        >
+          <Navigation size={16} />
+          <span>{isLocating ? 'Đang lấy tọa độ...' : 'Lấy tọa độ GPS hiện tại'}</span>
+        </button>
+        {data.latitude && data.longitude && (
+          <p style={{ fontSize: '12px', color: 'var(--success)', marginTop: '8px', textAlign: 'center' }}>
+            ✓ Đã lưu tọa độ: {data.latitude.toFixed(5)}, {data.longitude.toFixed(5)}
+          </p>
+        )}
       </div>
     </div>
   );
