@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MapPin, Building2, Layers, Navigation } from 'lucide-react';
+import { MapPin, Building2, Layers, Navigation, CheckCircle2 } from 'lucide-react';
 import { Geolocation } from '@capacitor/geolocation';
 import type { SurveyFormData } from '../types/survey';
 interface Step1LocationProps {
@@ -28,18 +28,35 @@ const FLOORS = [
 
 export const Step1Location: React.FC<Step1LocationProps> = ({ data, onChange }) => {
   const [isLocating, setIsLocating] = useState(false);
+  const [address, setAddress] = useState<string | null>(null);
 
   const handleGetLocation = async () => {
     setIsLocating(true);
+    setAddress(null);
     try {
       const position = await Geolocation.getCurrentPosition({
         enableHighAccuracy: true,
         timeout: 10000
       });
-      onChange({
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude
-      });
+      const { latitude, longitude } = position.coords;
+      onChange({ latitude, longitude });
+
+      // Reverse geocoding với OpenStreetMap Nominatim (miễn phí)
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&accept-language=vi`,
+          { headers: { 'User-Agent': 'VKU-FieldSurvey/1.0' } }
+        );
+        const geo = await res.json();
+        if (geo?.display_name) {
+          // Rút gọn địa chỉ cho dễ đọc
+          const parts = geo.display_name.split(',');
+          setAddress(parts.slice(0, 4).join(',').trim());
+        }
+      } catch {
+        // Nếu không reverse geocode được thì hiển tọa độ thô
+        setAddress(`${latitude.toFixed(5)}, ${longitude.toFixed(5)}`);
+      }
     } catch (err) {
       console.error('Lỗi lấy tọa độ:', err);
       alert('Không thể lấy tọa độ GPS. Hãy kiểm tra quyền truy cập vị trí.');
@@ -137,18 +154,30 @@ export const Step1Location: React.FC<Step1LocationProps> = ({ data, onChange }) 
       <div className="form-group" style={{ marginTop: '16px' }}>
         <button
           type="button"
-          className="btn btn-secondary"
+          className={`btn ${data.latitude ? 'btn-secondary' : 'btn-primary'}`}
           onClick={handleGetLocation}
           disabled={isLocating}
           style={{ width: '100%', justifyContent: 'center' }}
         >
           <Navigation size={16} />
-          <span>{isLocating ? 'Đang lấy tọa độ...' : 'Lấy tọa độ GPS hiện tại'}</span>
+          <span>{isLocating ? 'Đang lấy vị trí...' : data.latitude ? 'Cập nhật vị trí GPS' : 'Lấy vị trí GPS hiện tại'}</span>
         </button>
-        {data.latitude && data.longitude && (
-          <p style={{ fontSize: '12px', color: 'var(--success)', marginTop: '8px', textAlign: 'center' }}>
-            ✓ Đã lưu tọa độ: {data.latitude.toFixed(5)}, {data.longitude.toFixed(5)}
-          </p>
+        {address && (
+          <div style={{
+            marginTop: '10px',
+            padding: '10px 12px',
+            background: 'var(--success-bg)',
+            borderRadius: 'var(--radius)',
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '8px',
+          }}>
+            <CheckCircle2 size={16} color="var(--success)" style={{ flexShrink: 0, marginTop: 2 }} />
+            <div>
+              <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--success)' }}>Đã xác định vị trí</p>
+              <p style={{ fontSize: '12px', color: 'var(--text-main)', marginTop: 2 }}>{address}</p>
+            </div>
+          </div>
         )}
       </div>
     </div>

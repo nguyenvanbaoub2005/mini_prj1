@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Camera as CameraIcon, Upload, Trash2, CheckCircle2, CloudAlert, Star } from 'lucide-react';
+import { Camera as CameraIcon, Trash2, CheckCircle2, CloudAlert, Star } from 'lucide-react';
 import { takePhoto, fileToDataUrl } from '../services/camera';
 import type { NetworkState, SurveyFormData } from '../types/survey';
 
@@ -23,7 +23,7 @@ export const Step4MediaReview: React.FC<Step4MediaReviewProps> = ({
       // Native: Capacitor Camera thành công
       onChange({ photoBase64: photoUrl });
     } else {
-      // Web fallback: mở file picker khi Capacitor Camera không khả dụng
+      // Web fallback: trigger file input ẩn
       fileInputRef.current?.click();
     }
   };
@@ -52,12 +52,11 @@ export const Step4MediaReview: React.FC<Step4MediaReviewProps> = ({
         <p className="section-subtitle">Chụp ảnh hiện trường hư hỏng và kiểm tra lại thông tin</p>
       </div>
 
-      {/* Hidden input: Web browser fallback khi Capacitor Camera không khả dụng */}
+      {/* Hidden input: Web browser fallback - không có capture để chạy trên desktop */}
       <input
         type="file"
         ref={fileInputRef}
         accept="image/*"
-        capture="environment"
         style={{ display: 'none' }}
         onChange={handleFileChange}
       />
@@ -80,30 +79,22 @@ export const Step4MediaReview: React.FC<Step4MediaReviewProps> = ({
           </button>
         </div>
       ) : (
-        <div className="photo-capture-box" onClick={handleCaptureNative}>
+        <div
+          className="photo-capture-box"
+          onClick={handleCaptureNative}
+          style={{ cursor: 'pointer' }}
+        >
           <div className="category-icon-wrapper" style={{ width: 56, height: 56 }}>
             <CameraIcon size={28} />
           </div>
-          <div>
+          <div style={{ flex: 1 }}>
             <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>
-              Chụp ảnh hiện trường
+              Thêm ảnh hiện trường
             </h4>
             <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: 2 }}>
-              Camera Native (Android) / Chọn ảnh từ máy (Web)
+              Bấm để chụp hoặc chọn ảnh từ thiết bị
             </p>
           </div>
-          <button
-            type="button"
-            className="btn btn-secondary"
-            style={{ fontSize: '12px', padding: '6px 14px' }}
-            onClick={(e) => {
-              e.stopPropagation();
-              fileInputRef.current?.click();
-            }}
-          >
-            <Upload size={14} />
-            <span>Chọn từ tệp</span>
-          </button>
         </div>
       )}
 
