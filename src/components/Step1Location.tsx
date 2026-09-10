@@ -41,20 +41,19 @@ export const Step1Location: React.FC<Step1LocationProps> = ({ data, onChange }) 
       const { latitude, longitude } = position.coords;
       onChange({ latitude, longitude });
 
-      // Reverse geocoding với BigDataCloud (miễn phí, không cần API key, không bị CORS)
+      // Reverse geocoding với OpenStreetMap Nominatim (miễn phí)
       try {
         const res = await fetch(
-          `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=vi`
+          `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&accept-language=vi`
         );
         const geo = await res.json();
-        // Ghép địa chỉ từ các field trả về
-        const parts = [
-          geo.locality || geo.city,
-          geo.principalSubdivision,
-          geo.countryName,
-        ].filter(Boolean);
-        setAddress(parts.length > 0 ? parts.join(', ') : `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`);
+        if (geo?.display_name) {
+          // Rút gọn địa chỉ cho dễ đọc
+          const parts = geo.display_name.split(',');
+          setAddress(parts.slice(0, 4).join(',').trim());
+        }
       } catch {
+        // Nếu không reverse geocode được thì hiển tọa độ thô
         setAddress(`${latitude.toFixed(5)}, ${longitude.toFixed(5)}`);
       }
     } catch (err) {

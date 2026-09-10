@@ -19,12 +19,13 @@ export const Step4MediaReview: React.FC<Step4MediaReviewProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleCaptureNative = async () => {
-    // Trên Web: gọi file input NGAY LẬP TỨC (trước bất kỳ await nào) để giữ user gesture
     if (!Capacitor.isNativePlatform()) {
+      // Web browser: trigger file picker NGAY LẬP TỨC (trước async)
+      // Để giữ user gesture context, không được await gì trước khi gọi .click()
       fileInputRef.current?.click();
       return;
     }
-    // Trên Android Native: dùng Capacitor Camera
+    // Native Android/iOS: dùng Capacitor Camera
     const photoUrl = await takePhoto();
     if (photoUrl) {
       onChange({ photoBase64: photoUrl });
