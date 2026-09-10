@@ -10,7 +10,7 @@
 ## 1. GENERAL INFORMATION & DELIVERABLE LINKS
 * **Student Information:**
   1. Nguyễn Văn Bảo — Student ID: 23IT016 — Role: Full-Stack PWA Architecture & Development — Contribution: 100%
-* **🔗 Live Demo URL:** [https://mini-project1-ten.vercel.app/](https://mini-project1-ten.vercel.app/)
+* **🔗 Live Demo URL:** [CHÈN_LINK_VERCEL_MỚI_VÀO_ĐÂY]
 * **💻 GitHub Repository:** [https://github.com/nguyenvanbaoub2005/mini_prj1](https://github.com/nguyenvanbaoub2005/mini_prj1)
 * **📊 Google Sheets Database:** [https://docs.google.com/spreadsheets/d/1ry-4NJ-sXtrmQSzBmQkWriJqnWI_A1FnuIRDY96tp5A/edit?usp=sharing](https://docs.google.com/spreadsheets/d/1ry-4NJ-sXtrmQSzBmQkWriJqnWI_A1FnuIRDY96tp5A/edit?usp=sharing)
 * **🎥 Video Demo (Optional):** [https://youtu.be/xxx]
