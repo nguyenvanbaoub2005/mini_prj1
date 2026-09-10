@@ -24,3 +24,4 @@ dist-ssr
 *.sw?
 .agents/
 Mini-Project-1-Report-Template.md
+.vercel

@@ -76,9 +76,11 @@ class SyncEngine {
 
     this.isSyncing = true;
     let successCount = 0;
+    let pendingCount = 0;
 
     try {
       const pendingList = await getPendingSurveys();
+      pendingCount = pendingList.length;
       this.notify(true, pendingList.length);
 
       for (const survey of pendingList) {
@@ -102,7 +104,7 @@ class SyncEngine {
       this.notify(false, remaining.length);
     }
 
-    return { total: pendingList.length, success: successCount };
+    return { total: pendingCount, success: successCount };
   }
 }
 
