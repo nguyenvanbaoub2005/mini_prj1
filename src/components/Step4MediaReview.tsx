@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { Camera as CameraIcon, Trash2, CheckCircle2, CloudAlert, Star } from 'lucide-react';
+import { Capacitor } from '@capacitor/core';
 import { takePhoto, fileToDataUrl } from '../services/camera';
 import type { NetworkState, SurveyFormData } from '../types/survey';
 
@@ -18,13 +19,15 @@ export const Step4MediaReview: React.FC<Step4MediaReviewProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleCaptureNative = async () => {
+    // Trên Web: gọi file input NGAY LẬP TỨC (trước bất kỳ await nào) để giữ user gesture
+    if (!Capacitor.isNativePlatform()) {
+      fileInputRef.current?.click();
+      return;
+    }
+    // Trên Android Native: dùng Capacitor Camera
     const photoUrl = await takePhoto();
     if (photoUrl) {
-      // Native: Capacitor Camera thành công
       onChange({ photoBase64: photoUrl });
-    } else {
-      // Web fallback: trigger file input ẩn
-      fileInputRef.current?.click();
     }
   };
 
